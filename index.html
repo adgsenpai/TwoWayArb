@@ -102,65 +102,8 @@
       </section>
     </section>
     
-    <!-- ------------------ Mathematical Derivations & Proofs ------------------ -->
-    <section id="calculator" class="bg-white p-6 rounded shadow mt-6">
-      <h2 class="text-2xl font-bold mb-4">Two-Way Arbitrage Calculator</h2>
-      <form id="calcForm" class="space-y-4">
-        <div>
-          <label for="oddsA" class="block text-sm font-medium text-gray-700">Odds for Outcome A</label>
-          <input id="oddsA" type="number" step="any" placeholder="e.g., 1.70" class="mt-1 block w-full border border-gray-300 rounded p-2" />
-        </div>
-        <div>
-          <label for="oddsB" class="block text-sm font-medium text-gray-700">Odds for Outcome B</label>
-          <input id="oddsB" type="number" step="any" placeholder="e.g., 3.32" class="mt-1 block w-full border border-gray-300 rounded p-2" />
-        </div>
-        <div>
-          <label for="currency" class="block text-sm font-medium text-gray-700">Currency</label>
-          <select id="currency" class="mt-1 block w-full border border-gray-300 rounded p-2">
-            <option value="$">USD ($)</option>
-            <option value="€">EUR (€)</option>
-            <option value="£">GBP (£)</option>
-            <option value="¥">JPY (¥)</option>
-            <option value="₹">INR (₹)</option>
-          </select>
-        </div>
-        <div>
-          <label for="stakeAmount" class="block text-sm font-medium text-gray-700">Stake Amount</label>
-          <input id="stakeAmount" type="number" step="any" placeholder="e.g., 100" class="mt-1 block w-full border border-gray-300 rounded p-2" />
-        </div>
-        <div class="flex items-center justify-between">
-          <button id="calculateBtn" type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Calculate
-          </button>
-        </div>
-      </form>
-      <div id="result" class="mt-6 text-center text-lg"></div>
-      <section id="graphSection" class="bg-white p-6 rounded shadow mt-6 hidden">
-        <h2 class="text-2xl font-bold mb-4">Stake Distribution Graph</h2>
-        <canvas id="stakeChart"></canvas>
-      </section>
-    </section>
-    
-    <!-- ------------------ Advanced Arbitrage Calculator (Matrix & Multi‑Match) ------------------ -->
-    <section id="advancedCalculator" class="bg-white p-6 rounded shadow mt-6">
-      <h2 class="text-2xl font-bold mb-4">Advanced Arbitrage Calculator</h2>
-      <div class="mb-4">
-        <label for="advancedStakeAmount" class="block text-sm font-medium text-gray-700">Stake Amount</label>
-        <input id="advancedStakeAmount" type="number" step="any" placeholder="e.g., 100" class="mt-1 block w-full border border-gray-300 rounded p-2" />
-      </div>
-      <!-- Container for match tables -->
-      <div id="advancedMatchContainer"></div>
-      <div class="flex space-x-4 mt-4">
-        <button id="addMatchBtn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add Match</button>
-        <button id="calcAdvancedBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Calculate Advanced Arbitrage</button>
-      </div>
-      <div id="advancedResult" class="mt-6 text-center text-lg"></div>
-      <section id="advancedGraphSection" class="mt-6 hidden">
-        <h2 class="text-2xl font-bold mb-4">Advanced Stake Distribution Graph</h2>
-        <canvas id="advancedChart"></canvas>
-      </section>
-    </section>
-    
+
+
     <!-- ------------------ Mathematical Derivations & Proofs ------------------ -->
     <section id="mathSection" class="bg-white p-6 rounded shadow mt-6">
       <h2 class="text-2xl font-bold mb-4">Mathematical Derivations & Proofs</h2>
