@@ -4,10 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ADGSTUDIOS | Arbitrage Profitability Calculator</title>
-  <meta name="description" content="Calculate two-way and multi-outcome arbitrage opportunities with detailed profit margins, currency conversion, Excel upload, and complete mathematical proofs. Check your arbitrage profits with our advanced interactive calculator." />
-  <meta name="keywords" content="arbitrage, calculator, profit margin, currency, sports betting arbitrage, matrix arbitrage, Excel upload, sample Excel, lemma, theorem, math derivation, SEO" />
+  <meta name="description" content="Calculate two-way, matrix, and multi-match arbitrage opportunities with detailed profit margins, currency conversion, Excel upload, and complete mathematical proofs. Check your arbitrage profits with our advanced interactive calculator." />
+  <meta name="keywords" content="arbitrage, calculator, profit margin, currency, sports betting arbitrage, matrix arbitrage, multi-match arbitrage, Excel upload, sample Excel, lemma, theorem, math derivation, SEO" />
   <link rel="icon" type="image/x-icon" href="/static/1-59db940c.ico">
   <link href="https://cdn.tailwindcss.com" rel="stylesheet" />
+  <!-- Inline styles for delete and plus icons -->
+  <style>
+    .deleteBookmaker, .deleteOutcome {
+      display: none;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    .relative:hover .deleteBookmaker,
+    .relative:hover .deleteOutcome {
+      display: inline;
+    }
+  </style>
   <!-- Chart.js for graphs -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- MathJax for rendering LaTeX -->
@@ -28,8 +42,8 @@
     <p class="text-center">Calculate your arbitrage opportunities with detailed math, proofs, Excel upload, sample downloads and graphs.</p>
   </header>
   
-  <main class="p-4 max-w-4xl mx-auto">
-    <!-- Simple Two-Way Arbitrage Calculator Section -->
+  <main class="p-4 max-w-6xl mx-auto">
+    <!-- ------------------ Simple Two-Way Arbitrage Calculator ------------------ -->
     <section id="calculator" class="bg-white p-6 rounded shadow mt-6">
       <h2 class="text-2xl font-bold mb-4">Two-Way Arbitrage Calculator</h2>
       <form id="calcForm" class="space-y-4">
@@ -51,7 +65,6 @@
             <option value="₹">INR (₹)</option>
           </select>
         </div>
-        <!-- New Stake Amount Input -->
         <div>
           <label for="stakeAmount" class="block text-sm font-medium text-gray-700">Stake Amount</label>
           <input id="stakeAmount" type="number" step="any" placeholder="e.g., 100" class="mt-1 block w-full border border-gray-300 rounded p-2" />
@@ -63,78 +76,33 @@
         </div>
       </form>
       <div id="result" class="mt-6 text-center text-lg"></div>
+      <section id="graphSection" class="bg-white p-6 rounded shadow mt-6 hidden">
+        <h2 class="text-2xl font-bold mb-4">Stake Distribution Graph</h2>
+        <canvas id="stakeChart"></canvas>
+      </section>
     </section>
     
-    <!-- Graph Section for Simple Calculator -->
-    <section id="graphSection" class="bg-white p-6 rounded shadow mt-6 hidden">
-      <h2 class="text-2xl font-bold mb-4">Stake Distribution Graph</h2>
-      <canvas id="stakeChart"></canvas>
-    </section>
-    
-    <!-- Advanced Arbitrage Matrix Calculator Section -->
+    <!-- ------------------ Advanced Arbitrage Calculator (Matrix & Multi‑Match) ------------------ -->
     <section id="advancedCalculator" class="bg-white p-6 rounded shadow mt-6">
-      <h2 class="text-2xl font-bold mb-4">Advanced Arbitrage Matrix Calculator</h2>
-      <!-- New Stake Amount Input for Advanced Calculator -->
+      <h2 class="text-2xl font-bold mb-4">Advanced Arbitrage Calculator</h2>
       <div class="mb-4">
         <label for="advancedStakeAmount" class="block text-sm font-medium text-gray-700">Stake Amount</label>
         <input id="advancedStakeAmount" type="number" step="any" placeholder="e.g., 100" class="mt-1 block w-full border border-gray-300 rounded p-2" />
       </div>
-      <div>
-        <h3 class="text-xl font-semibold">Manual Input</h3>
-        <div class="overflow-x-auto">
-          <table id="manualMatrix" class="min-w-full border border-gray-300">
-            <thead>
-              <tr>
-                <th class="px-2 py-1 border">Outcome / Bookmaker</th>
-                <th class="px-2 py-1 border"><input type="text" value="Bookmaker 1" class="w-full p-1 border"/></th>
-                <th class="px-2 py-1 border"><input type="text" value="Bookmaker 2" class="w-full p-1 border"/></th>
-                <th class="px-2 py-1 border"><input type="text" value="Bookmaker 3" class="w-full p-1 border"/></th>
-                <th class="px-2 py-1 border"><input type="text" value="Bookmaker 4" class="w-full p-1 border"/></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="px-2 py-1 border"><input type="text" value="Home Win (Man UTD)" class="w-full p-1 border"/></td>
-                <td class="px-2 py-1 border"><input type="number" step="any" class="w-full p-1 border" placeholder="Odds" value="1.80"/></td>
-                <td class="px-2 py-1 border"><input type="number" step="any" class="w-full p-1 border" placeholder="Odds" value="1.85"/></td>
-                <td class="px-2 py-1 border"><input type="number" step="any" class="w-full p-1 border" placeholder="Odds" value="1.90"/></td>
-                <td class="px-2 py-1 border"><input type="number" step="any" class="w-full p-1 border" placeholder="Odds" value="1.95"/></td>
-              </tr>
-              <tr>
-                <td class="px-2 py-1 border"><input type="text" value="Draw" class="w-full p-1 border"/></td>
-                <td class="px-2 py-1 border"><input type="number" step="any" class="w-full p-1 border" placeholder="Odds" value="4.50"/></td>
-                <td class="px-2 py-1 border"><input type="number" step="any" class="w-full p-1 border" placeholder="Odds" value="4.40"/></td>
-                <td class="px-2 py-1 border"><input type="number" step="any" class="w-full p-1 border" placeholder="Odds" value="4.60"/></td>
-                <td class="px-2 py-1 border"><input type="number" step="any" class="w-full p-1 border" placeholder="Odds" value="4.55"/></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="flex space-x-4 mt-4">
-          <button id="addRowBtn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add Row</button>
-          <button id="addColBtn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add Column</button>
-          <button id="calcMatrixBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Calculate Matrix Arbitrage</button>
-        </div>
-      </div>
-      <div class="mt-4">
-        <h3 class="text-xl font-semibold">Excel Upload</h3>
-        <input type="file" id="excelUpload" accept=".xlsx, .xls" class="mt-2 p-2 border rounded"/>
-        <button id="calcExcelBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2">Calculate from Excel</button>
-      </div>
-      <!-- New button to download a sample Excel file -->
-      <div class="mt-4">
-        <button id="downloadSampleBtn" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
-          Download Sample Excel Matrix
-        </button>
+      <!-- Container for match tables -->
+      <div id="advancedMatchContainer"></div>
+      <div class="flex space-x-4 mt-4">
+        <button id="addMatchBtn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add Match</button>
+        <button id="calcAdvancedBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Calculate Advanced Arbitrage</button>
       </div>
       <div id="advancedResult" class="mt-6 text-center text-lg"></div>
-      <div id="advancedGraphSection" class="mt-6 hidden">
+      <section id="advancedGraphSection" class="mt-6 hidden">
         <h2 class="text-2xl font-bold mb-4">Advanced Stake Distribution Graph</h2>
         <canvas id="advancedChart"></canvas>
-      </div>
+      </section>
     </section>
     
-    <!-- Mathematical Derivations Section -->
+    <!-- ------------------ Mathematical Derivations & Proofs ------------------ -->
     <section id="mathSection" class="bg-white p-6 rounded shadow mt-6">
       <h2 class="text-2xl font-bold mb-4">Mathematical Derivations & Proofs</h2>
       <div class="prose">
@@ -158,7 +126,7 @@
           \]
         </p>
         <p>
-          This allows us to express the bets in terms of \( R \):
+          This gives:
           \[
           x = \frac{R}{a}, \quad y = \frac{R}{b}.
           \]
@@ -166,7 +134,7 @@
         <p>
           Substituting back into the total stake:
           \[
-          \frac{R}{a} + \frac{R}{b} = T \quad \Rightarrow \quad R \left( \frac{1}{a} + \frac{1}{b} \right) = T.
+          \frac{R}{a} + \frac{R}{b} = T \quad \Rightarrow \quad R \left(\frac{1}{a} + \frac{1}{b}\right) = T.
           \]
         </p>
         <p>
@@ -176,7 +144,7 @@
           \]
         </p>
         <p>
-          For an arbitrage to be profitable, we require that \( R > T \), which simplifies to:
+          For an arbitrage to be profitable, we require \( R > T \), which simplifies to:
           \[
           \frac{1}{a} + \frac{1}{b} < 1.
           \]
@@ -187,34 +155,15 @@
           \[
           \frac{1}{a} + \frac{1}{b} < 1,
           \]
-          then there exists a two‑way arbitrage opportunity.
+          then a two‑way arbitrage opportunity exists.
         </p>
         <h3>Theorem (Profitability Theorem)</h3>
         <p>
-          <strong>Theorem:</strong> Given a total stake \( T \) and odds \( a \) and \( b \), the arbitrage profit margin \( P \) is given by:
+          <strong>Theorem:</strong> Given a total stake \( T \) and odds \( a \) and \( b \), the arbitrage profit margin \( P \) is:
           \[
           P = 1 - \left(\frac{1}{a} + \frac{1}{b}\right),
           \]
           and an arbitrage opportunity exists if and only if \( P > 0 \).
-        </p>
-        <p>
-          <em>Proof:</em> Starting from the condition for equal returns:
-          \[
-          a \cdot x = b \cdot y = R,
-          \]
-          with the total stake constraint \( x + y = T \), we have:
-          \[
-          \frac{R}{a} + \frac{R}{b} = T \quad \Rightarrow \quad R = \frac{T}{\frac{1}{a} + \frac{1}{b}}.
-          \]
-          For profitability, we need \( R > T \), so:
-          \[
-          \frac{T}{\frac{1}{a} + \frac{1}{b}} > T \quad \Rightarrow \quad \frac{1}{a} + \frac{1}{b} < 1.
-          \]
-          The profit margin relative to the stake is therefore:
-          \[
-          \frac{R - T}{T} = 1 - \left(\frac{1}{a} + \frac{1}{b}\right).
-          \]
-          This completes the proof.
         </p>
         <hr>
         <!-- Advanced Matrix Arbitrage Derivation -->
@@ -223,31 +172,84 @@
           \[
           o_i^* = \max_{j=1,\dots,k} o_{ij}.
           \]
-          Then an arbitrage opportunity exists if and only if:
+          An arbitrage opportunity exists if:
           \[
-          \sum_{i=1}^{n} \frac{1}{o_i^*} < 1.
+          \sum_{i=1}^{n} \frac{1}{o_i^*} < 1,
           \]
-          The profit margin is:
+          with profit margin:
           \[
           1 - \sum_{i=1}^{n} \frac{1}{o_i^*}.
           \]
         </p>
         <h3>Advanced Lemma (Best Odds Selection)</h3>
         <p>
-          <strong>Lemma:</strong> For a given outcome \( i \) and a set of \( k \) bookmakers, the optimal odds \( o_i^* \) is achieved by selecting:
+          <strong>Lemma:</strong> For a given outcome \( i \) and a set of \( k \) bookmakers, the optimal odds is:
           \[
           o_i^* = \max_{1 \leq j \leq k} o_{ij}.
           \]
         </p>
         <h3>Advanced Theorem (Matrix Arbitrage Theorem)</h3>
         <p>
-          <strong>Theorem:</strong> Given a matrix of odds \( \{ o_{ij} \} \) for \( n \) outcomes and \( k \) bookmakers, an arbitrage opportunity exists if and only if:
+          <strong>Theorem:</strong> Given a matrix of odds \( \{ o_{ij} \} \) for \( n \) outcomes and \( k \) bookmakers, an arbitrage opportunity exists if:
           \[
-          \sum_{i=1}^{n} \frac{1}{\max_{1 \leq j \leq k} o_{ij}} < 1.
+          \sum_{i=1}^{n} \frac{1}{\max_{1 \leq j \leq k} o_{ij}} < 1,
           \]
-          Moreover, the profit margin is:
+          with profit margin:
           \[
           1 - \sum_{i=1}^{n} \frac{1}{\max_{1 \leq j \leq k} o_{ij}}.
+          \]
+        </p>
+        <hr>
+        <!-- Multi-Match (Multi-Dimensional) Arbitrage Derivation -->
+        <p>
+          For a series of \( k \) independent matches (or games), assume each match \( g \) has \( n_g \) outcomes with best odds \( o_{i}^{*(g)} \) for outcome \( i \) in match \( g \). Consider a combined bet covering every possible outcome combination across the \( k \) matches. The compound odds for a specific combination \( (i_1, i_2, \dots, i_k) \) is:
+          \[
+          O_{i_1,i_2,\dots,i_k} = \prod_{g=1}^{k} o_{i_g}^{*(g)}.
+          \]
+        </p>
+        <p>
+          If a total stake \( T \) is distributed among all \( N = \prod_{g=1}^{k} n_g \) combinations, with each combination receiving a bet \( x_{i_1,i_2,\dots,i_k} \) such that:
+          \[
+          \sum_{(i_1,\dots,i_k)} x_{i_1,i_2,\dots,i_k} = T,
+          \]
+          and aiming for a common return \( R \), we set:
+          \[
+          x_{i_1,i_2,\dots,i_k} = \frac{R}{O_{i_1,i_2,\dots,i_k}}.
+          \]
+        </p>
+        <p>
+          Summing over all combinations gives:
+          \[
+          R \left( \sum_{(i_1,\dots,i_k)} \frac{1}{O_{i_1,i_2,\dots,i_k}} \right) = T.
+          \]
+        </p>
+        <p>
+          Thus, the common return is:
+          \[
+          R = \frac{T}{\sum_{(i_1,i_2,\dots,i_k)} \frac{1}{O_{i_1,i_2,\dots,i_k}}}.
+          \]
+        </p>
+        <p>
+          For the arbitrage to be profitable, we require \( R > T \), which implies:
+          \[
+          \sum_{(i_1,i_2,\dots,i_k)} \frac{1}{O_{i_1,i_2,\dots,i_k}} < 1.
+          \]
+        </p>
+        <p>
+          The profit margin for the multi-match arbitrage is then:
+          \[
+          P = 1 - \sum_{(i_1,i_2,\dots,i_k)} \frac{1}{O_{i_1,i_2,\dots,i_k}}.
+          \]
+        </p>
+        <h3>Multi-Match Arbitrage Theorem</h3>
+        <p>
+          <strong>Theorem:</strong> For \( k \) independent matches, with each match \( g \) having \( n_g \) outcomes and corresponding best odds \( o_{i}^{*(g)} \), an overall arbitrage opportunity exists if:
+          \[
+          \sum_{(i_1,i_2,\dots,i_k)} \frac{1}{\prod_{g=1}^{k} o_{i_g}^{*(g)}} < 1.
+          \]
+          The total arbitrage profit margin is given by:
+          \[
+          P = 1 - \sum_{(i_1,i_2,\dots,i_k)} \frac{1}{\prod_{g=1}^{k} o_{i_g}^{*(g)}}.
           \]
         </p>
       </div>
@@ -261,7 +263,9 @@
     </p>
     <br>
     <div class="flex items-center justify-center">
-        <a href="https://clustrmaps.com/site/1c4yx"  title="ClustrMaps"><img src="//www.clustrmaps.com/map_v2.png?d=z9ePD342k15M77o08Py8Yjgg1UZtvNVmnyhshmg-E1Q&cl=ffffff" /></a>
+      <a href="https://clustrmaps.com/site/1c4yx" title="ClustrMaps">
+        <img src="//www.clustrmaps.com/map_v2.png?d=z9ePD342k15M77o08Py8Yjgg1UZtvNVmnyhshmg-E1Q&cl=ffffff" />
+      </a>
     </div>
   </footer>
   
@@ -342,114 +346,297 @@
       }
     });
 
-    // ------------------ Advanced Arbitrage Matrix Calculator ------------------
-    const addRowBtn = document.getElementById('addRowBtn');
-    const addColBtn = document.getElementById('addColBtn');
-    const calcMatrixBtn = document.getElementById('calcMatrixBtn');
-    const manualMatrix = document.getElementById('manualMatrix');
+    // ------------------ Advanced Arbitrage Calculator (Matrix & Multi‑Match) ------------------
+    const advancedMatchContainer = document.getElementById('advancedMatchContainer');
+    const addMatchBtn = document.getElementById('addMatchBtn');
+    const calcAdvancedBtn = document.getElementById('calcAdvancedBtn');
     const advancedResultDiv = document.getElementById('advancedResult');
-    const excelUpload = document.getElementById('excelUpload');
-    const calcExcelBtn = document.getElementById('calcExcelBtn');
     const advancedGraphSection = document.getElementById('advancedGraphSection');
     let advancedChart = null;
+    let matchCounter = 0;
 
-    // Add new row to manual matrix
-    addRowBtn.addEventListener('click', () => {
-      const tbody = manualMatrix.querySelector('tbody');
-      const newRow = document.createElement('tr');
-      // Outcome name cell
-      const outcomeCell = document.createElement('td');
-      outcomeCell.className = 'px-2 py-1 border';
-      outcomeCell.innerHTML = '<input type="text" value="Outcome" class="w-full p-1 border"/>';
-      newRow.appendChild(outcomeCell);
-      // Add cells for each bookmaker (based on header count)
-      const headerCells = manualMatrix.querySelectorAll('thead th');
-      for (let i = 1; i < headerCells.length; i++) {
-        const cell = document.createElement('td');
-        cell.className = 'px-2 py-1 border';
-        cell.innerHTML = '<input type="number" step="any" class="w-full p-1 border" placeholder="Odds"/>';
-        newRow.appendChild(cell);
-      }
-      tbody.appendChild(newRow);
-    });
+    // Function to create a new match table with match naming, delete match, and in–table delete options
+    function createMatchTable() {
+      matchCounter++;
+      const matchDiv = document.createElement('div');
+      matchDiv.className = "matchTable bg-gray-50 p-4 rounded shadow mt-4";
+      matchDiv.id = `match-${matchCounter}`;
+      matchDiv.innerHTML = `
+        <div class="mb-2 flex items-center justify-between">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Match Name</label>
+            <input type="text" class="matchNameInput mt-1 block w-full border border-gray-300 rounded p-2" placeholder="Enter match name" value="Match ${matchCounter}" />
+          </div>
+          <button class="deleteMatchBtn bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete Match</button>
+        </div>
+        <div class="flex items-center justify-between">
+          <h3 class="text-xl font-semibold">Match ${matchCounter} Matrix</h3>
+          <div class="flex space-x-2">
+            <button class="addOutcomeBtn bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded">Add Outcome</button>
+            <button class="addBookmakerBtn bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded">Add Bookmaker</button>
+          </div>
+        </div>
+        <div class="overflow-x-auto mt-2">
+          <table class="w-full border">
+            <thead>
+              <tr>
+                <th class="px-2 py-1 border">Outcome / Bookmaker</th>
+                <th class="px-2 py-1 border relative">
+                  <input type="text" value="Bookmaker 1" class="w-full p-1 border"/>
+                  <button class="deleteBookmaker absolute top-0 right-0" title="Delete Bookmaker">🗑️</button>
+                </th>
+                <th class="px-2 py-1 border relative">
+                  <input type="text" value="Bookmaker 2" class="w-full p-1 border"/>
+                  <button class="deleteBookmaker absolute top-0 right-0" title="Delete Bookmaker">🗑️</button>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="px-2 py-1 border relative">
+                  <input type="text" value="Outcome 1" class="w-full p-1 border"/>
+                  <button class="deleteOutcome absolute top-0 right-0" title="Delete Outcome">🗑️</button>
+                </td>
+                <td class="px-2 py-1 border">
+                  <input type="number" step="any" value="1.80" class="w-full p-1 border" placeholder="Odds"/>
+                </td>
+                <td class="px-2 py-1 border">
+                  <input type="number" step="any" value="1.90" class="w-full p-1 border" placeholder="Odds"/>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-2 py-1 border relative">
+                  <input type="text" value="Outcome 2" class="w-full p-1 border"/>
+                  <button class="deleteOutcome absolute top-0 right-0" title="Delete Outcome">🗑️</button>
+                </td>
+                <td class="px-2 py-1 border">
+                  <input type="number" step="any" value="4.50" class="w-full p-1 border" placeholder="Odds"/>
+                </td>
+                <td class="px-2 py-1 border">
+                  <input type="number" step="any" value="4.60" class="w-full p-1 border" placeholder="Odds"/>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+      advancedMatchContainer.appendChild(matchDiv);
 
-    // Add new column to manual matrix
-    addColBtn.addEventListener('click', () => {
-      // Add header cell for new bookmaker
-      const theadRow = manualMatrix.querySelector('thead tr');
-      const newHeader = document.createElement('th');
-      newHeader.className = 'px-2 py-1 border';
-      newHeader.innerHTML = '<input type="text" value="Bookmaker" class="w-full p-1 border"/>';
-      theadRow.appendChild(newHeader);
-      // Add new cell for each row in tbody
-      const tbodyRows = manualMatrix.querySelectorAll('tbody tr');
-      tbodyRows.forEach(row => {
-        const newCell = document.createElement('td');
-        newCell.className = 'px-2 py-1 border';
-        newCell.innerHTML = '<input type="number" step="any" class="w-full p-1 border" placeholder="Odds"/>';
-        row.appendChild(newCell);
+      // Attach event listener to delete match button
+      const deleteMatchBtn = matchDiv.querySelector('.deleteMatchBtn');
+      deleteMatchBtn.addEventListener('click', () => {
+        matchDiv.remove();
       });
-    });
 
-    // Calculate arbitrage from manual matrix
-    calcMatrixBtn.addEventListener('click', () => {
+      // Attach event listeners for existing deleteOutcome buttons in the table
+      const outcomeDeleteButtons = matchDiv.querySelectorAll('.deleteOutcome');
+      outcomeDeleteButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const row = btn.closest('tr');
+          row.remove();
+        });
+      });
+
+      // Attach event listeners for existing deleteBookmaker buttons in the header
+      const bookmakerDeleteButtons = matchDiv.querySelectorAll('.deleteBookmaker');
+      bookmakerDeleteButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const th = btn.closest('th');
+          const table = btn.closest('table');
+          const index = Array.from(th.parentElement.children).indexOf(th);
+          th.remove();
+          // Remove corresponding cell from each row in tbody
+          table.querySelectorAll('tbody tr').forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if(cells[index]) cells[index].remove();
+          });
+        });
+      });
+
+      // Event listener for adding a new outcome row
+      const addOutcomeBtn = matchDiv.querySelector('.addOutcomeBtn');
+      addOutcomeBtn.addEventListener('click', () => {
+        const table = matchDiv.querySelector('table');
+        const tbody = table.querySelector('tbody');
+        const newRow = document.createElement('tr');
+        // Outcome cell with delete button
+        newRow.innerHTML = `
+          <td class="px-2 py-1 border relative">
+            <input type="text" value="Outcome" class="w-full p-1 border"/>
+            <button class="deleteOutcome absolute top-0 right-0" title="Delete Outcome">🗑️</button>
+          </td>
+        `;
+        // Add empty cells for each existing bookmaker (based on header count minus one)
+        const headerCount = table.querySelectorAll('thead tr th').length;
+        for (let i = 1; i < headerCount; i++) {
+          const cell = document.createElement('td');
+          cell.className = 'px-2 py-1 border';
+          cell.innerHTML = '<input type="number" step="any" placeholder="Odds" class="w-full p-1 border"/>';
+          newRow.appendChild(cell);
+        }
+        tbody.appendChild(newRow);
+        // Attach delete event for the new outcome row
+        const newDeleteBtn = newRow.querySelector('.deleteOutcome');
+        newDeleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          newRow.remove();
+        });
+      });
+
+      // Event listener for adding a new bookmaker column
+      const addBookmakerBtn = matchDiv.querySelector('.addBookmakerBtn');
+      addBookmakerBtn.addEventListener('click', () => {
+        const table = matchDiv.querySelector('table');
+        const theadRow = table.querySelector('thead tr');
+        const newTh = document.createElement('th');
+        newTh.className = 'px-2 py-1 border relative';
+        newTh.innerHTML = `
+          <input type="text" value="Bookmaker" class="w-full p-1 border"/>
+          <button class="deleteBookmaker absolute top-0 right-0" title="Delete Bookmaker">🗑️</button>
+        `;
+        theadRow.appendChild(newTh);
+        // Add new cell to each row in tbody
+        table.querySelectorAll('tbody tr').forEach(row => {
+          const newTd = document.createElement('td');
+          newTd.className = 'px-2 py-1 border';
+          newTd.innerHTML = '<input type="number" step="any" placeholder="Odds" class="w-full p-1 border"/>';
+          row.appendChild(newTd);
+        });
+        // Attach event listener for the new deleteBookmaker button
+        const newDeleteBtn = newTh.querySelector('.deleteBookmaker');
+        newDeleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const index = Array.from(newTh.parentElement.children).indexOf(newTh);
+          newTh.remove();
+          table.querySelectorAll('tbody tr').forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if(cells[index]) cells[index].remove();
+          });
+        });
+      });
+    }
+
+    // Initially add one match table
+    createMatchTable();
+    addMatchBtn.addEventListener('click', createMatchTable);
+
+    // Function to compute Cartesian product of arrays
+    function cartesianProduct(arrays) {
+      return arrays.reduce((acc, curr) => {
+        let result = [];
+        acc.forEach(a => {
+          curr.forEach(b => {
+            result.push(a.concat(b));
+          });
+        });
+        return result;
+      }, [[]]);
+    }
+
+    calcAdvancedBtn.addEventListener('click', () => {
       const totalStake = parseFloat(document.getElementById('advancedStakeAmount').value);
       if (isNaN(totalStake) || totalStake <= 0) {
         advancedResultDiv.innerHTML = 'Please enter a valid positive stake amount.';
         advancedGraphSection.classList.add('hidden');
         return;
       }
-      
-      const table = manualMatrix;
-      const headers = table.querySelectorAll('thead th');
-      const outcomeRows = table.querySelectorAll('tbody tr');
-      let bestOdds = [];
-      let bestBookmakers = [];
-      let outcomes = [];
-      outcomeRows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const outcomeName = cells[0].querySelector('input').value || "Outcome";
-        outcomes.push(outcomeName);
-        let maxOdd = 0;
-        let bookmakerName = "";
-        for (let i = 1; i < cells.length; i++) {
-          const odd = parseFloat(cells[i].querySelector('input').value);
-          if (!isNaN(odd) && odd > maxOdd) {
-            maxOdd = odd;
-            bookmakerName = headers[i].querySelector('input').value || `Bookmaker ${i}`;
+
+      // Gather best odds arrays from each match table
+      const matchTables = document.querySelectorAll('.matchTable');
+      let bestOddsArrays = [];
+      let singleMatchResults = "";
+      let multiMatch = matchTables.length > 1;
+
+      matchTables.forEach(matchDiv => {
+        const matchName = matchDiv.querySelector('.matchNameInput').value || "Unnamed Match";
+        const table = matchDiv.querySelector('table');
+        const tbodyRows = table.querySelectorAll('tbody tr');
+        let bestOdds = [];
+        tbodyRows.forEach(row => {
+          const cells = row.querySelectorAll('td');
+          // Outcome name from first cell
+          const outcomeName = cells[0].querySelector('input').value;
+          let bestValue = -Infinity, bestBookmaker = "";
+          for (let i = 1; i < cells.length; i++) {
+            const odd = parseFloat(cells[i].querySelector('input').value);
+            if (!isNaN(odd) && odd > bestValue) {
+              bestValue = odd;
+              const headerInput = table.querySelector(`thead tr th:nth-child(${i+1}) input`);
+              bestBookmaker = headerInput ? headerInput.value : `Bookmaker ${i}`;
+            }
+          }
+          if (bestValue > 0) {
+            bestOdds.push({
+              odd: bestValue,
+              outcomeName: outcomeName,
+              bookmaker: bestBookmaker,
+              matchName: matchName
+            });
+          }
+        });
+        bestOddsArrays.push(bestOdds);
+
+        // For single-match arbitrage, compute the matrix arbitrage for that match
+        if (!multiMatch) {
+          const sumReciprocals = bestOdds.reduce((sum, obj) => sum + (1/obj.odd), 0);
+          if (sumReciprocals < 1) {
+            const profitMargin = 1 - sumReciprocals;
+            singleMatchResults += `<span class="text-green-600 font-bold">Arbitrage opportunity exists in ${matchName}!</span><br>`;
+            singleMatchResults += `Profit Margin: ${(profitMargin * 100).toFixed(2)}%<br>`;
+            singleMatchResults += `<strong>Details:</strong><br>`;
+            bestOdds.forEach((obj, index) => {
+              singleMatchResults += `Outcome ${index+1}: ${obj.outcomeName} (Bookmaker: ${obj.bookmaker}, Odd: ${obj.odd})<br>`;
+            });
+            singleMatchResults += `<br>`;
+          } else {
+            singleMatchResults += `<span class="text-red-600 font-bold">No arbitrage opportunity in ${matchName}.</span><br><br>`;
           }
         }
-        bestOdds.push(maxOdd);
-        bestBookmakers.push(bookmakerName);
       });
 
-      const sumReciprocals = bestOdds.reduce((sum, odd) => sum + (1/odd), 0);
+      // If only one match table, show the single-match result
+      if (!multiMatch) {
+        advancedResultDiv.innerHTML = singleMatchResults;
+        advancedGraphSection.classList.add('hidden');
+        return;
+      }
+
+      // Multi-match arbitrage: compute Cartesian product of best odds arrays
+      const combinations = cartesianProduct(bestOddsArrays);
+      let comboData = combinations.map(combo => {
+        const combinedOdd = combo.reduce((prod, obj) => prod * obj.odd, 1);
+        return {combo, combinedOdd};
+      });
+      const sumReciprocals = comboData.reduce((sum, obj) => sum + (1 / obj.combinedOdd), 0);
       let resultHTML = "";
       if (sumReciprocals < 1) {
         const profitMargin = 1 - sumReciprocals;
-        resultHTML += `<span class="text-green-600 font-bold">Arbitrage opportunity exists!</span><br>`;
-        resultHTML += `Profit Margin: ${(profitMargin * 100).toFixed(2)}%<br>`;
-        resultHTML += `<strong>Best Odds by Outcome:</strong><br>`;
-        outcomes.forEach((outcome, index) => {
-          resultHTML += `${outcome}: Best Odd = ${bestOdds[index]} from ${bestBookmakers[index]}<br>`;
-        });
-        let stakes = bestOdds.map(odd => totalStake / (odd * sumReciprocals));
-        resultHTML += `<br>For a total stake of ${totalStake}, bet:<br>`;
-        outcomes.forEach((outcome, index) => {
-          resultHTML += `${outcome} (${bestBookmakers[index]}): ${stakes[index].toFixed(2)}<br>`;
+        resultHTML += `<span class="text-green-600 font-bold">Multi-match arbitrage opportunity exists!</span><br>`;
+        resultHTML += `Profit Margin: ${(profitMargin * 100).toFixed(2)}%<br><br>`;
+        resultHTML += `<strong>Stake Distribution for Each Outcome Combination:</strong><br>`;
+        comboData.forEach((obj, index) => {
+          const stake = totalStake / (obj.combinedOdd * sumReciprocals);
+          obj.stake = stake;
+          // Build a detailed label for each match in the combination
+          const label = obj.combo.map(detail => {
+            return `${detail.matchName} – ${detail.outcomeName} (Bookmaker: ${detail.bookmaker}, Odd: ${detail.odd})`;
+          }).join(' | ');
+          resultHTML += `Combination ${index+1}: ${label} — Stake: ${stake.toFixed(2)}<br>`;
         });
         advancedResultDiv.innerHTML = resultHTML;
-        // Render advanced graph
+        // Render graph
         advancedGraphSection.classList.remove('hidden');
-        const ctx2 = document.getElementById('advancedChart').getContext('2d');
+        const ctxAdv = document.getElementById('advancedChart').getContext('2d');
         if (advancedChart) advancedChart.destroy();
-        advancedChart = new Chart(ctx2, {
+        advancedChart = new Chart(ctxAdv, {
           type: 'bar',
           data: {
-            labels: outcomes,
+            labels: comboData.map((obj, index) => `Combo ${index+1}`),
             datasets: [{
               label: 'Stake Distribution',
-              data: stakes,
+              data: comboData.map(obj => obj.stake),
               backgroundColor: 'rgba(153, 102, 255, 0.6)',
               borderColor: 'rgba(153, 102, 255, 1)',
               borderWidth: 1
@@ -465,101 +652,9 @@
           }
         });
       } else {
-        advancedResultDiv.innerHTML = `<span class="text-red-600 font-bold">No arbitrage opportunity.</span>`;
+        advancedResultDiv.innerHTML = `<span class="text-red-600 font-bold">No multi-match arbitrage opportunity.</span>`;
         advancedGraphSection.classList.add('hidden');
       }
-    });
-
-    // Calculate arbitrage from Excel file in advanced matrix
-    calcExcelBtn.addEventListener('click', () => {
-      const file = excelUpload.files[0];
-      if (!file) {
-        alert("Please upload an Excel file.");
-        return;
-      }
-      const totalStake = parseFloat(document.getElementById('advancedStakeAmount').value);
-      if (isNaN(totalStake) || totalStake <= 0) {
-        advancedResultDiv.innerHTML = 'Please enter a valid positive stake amount.';
-        advancedGraphSection.classList.add('hidden');
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, {type: 'array'});
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-        if (jsonData.length < 2) {
-          alert("Excel file format is not valid.");
-          return;
-        }
-        const headers = jsonData[0];
-        let outcomes = [];
-        let bestOdds = [];
-        let bestBookmakers = [];
-        for (let i = 1; i < jsonData.length; i++) {
-          const row = jsonData[i];
-          const outcomeName = row[0] || "Outcome " + i;
-          outcomes.push(outcomeName);
-          let maxOdd = 0;
-          let bookmakerName = "";
-          for (let j = 1; j < row.length; j++) {
-            const odd = parseFloat(row[j]);
-            if (!isNaN(odd) && odd > maxOdd) {
-              maxOdd = odd;
-              bookmakerName = headers[j] || `Bookmaker ${j}`;
-            }
-          }
-          bestOdds.push(maxOdd);
-          bestBookmakers.push(bookmakerName);
-        }
-        const sumReciprocals = bestOdds.reduce((sum, odd) => sum + (1/odd), 0);
-        let resultHTML = "";
-        if (sumReciprocals < 1) {
-          const profitMargin = 1 - sumReciprocals;
-          resultHTML += `<span class="text-green-600 font-bold">Arbitrage opportunity exists!</span><br>`;
-          resultHTML += `Profit Margin: ${(profitMargin * 100).toFixed(2)}%<br>`;
-          resultHTML += `<strong>Best Odds by Outcome:</strong><br>`;
-          outcomes.forEach((outcome, index) => {
-            resultHTML += `${outcome}: Best Odd = ${bestOdds[index]} from ${bestBookmakers[index]}<br>`;
-          });
-          let stakes = bestOdds.map(odd => totalStake / (odd * sumReciprocals));
-          resultHTML += `<br>For a total stake of ${totalStake}, bet:<br>`;
-          outcomes.forEach((outcome, index) => {
-            resultHTML += `${outcome} (${bestBookmakers[index]}): ${stakes[index].toFixed(2)}<br>`;
-          });
-          advancedResultDiv.innerHTML = resultHTML;
-          advancedGraphSection.classList.remove('hidden');
-          const ctx3 = document.getElementById('advancedChart').getContext('2d');
-          if (advancedChart) advancedChart.destroy();
-          advancedChart = new Chart(ctx3, {
-            type: 'bar',
-            data: {
-              labels: outcomes,
-              datasets: [{
-                label: 'Stake Distribution',
-                data: stakes,
-                backgroundColor: 'rgba(153, 102, 255, 0.6)',
-                borderColor: 'rgba(153, 102, 255, 1)',
-                borderWidth: 1
-              }]
-            },
-            options: {
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  title: { display: true, text: 'Stake' }
-                }
-              }
-            }
-          });
-        } else {
-          advancedResultDiv.innerHTML = `<span class="text-red-600 font-bold">No arbitrage opportunity.</span>`;
-          advancedGraphSection.classList.add('hidden');
-        }
-      };
-      reader.readAsArrayBuffer(file);
     });
   </script>
 </body>
