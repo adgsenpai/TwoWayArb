@@ -29,7 +29,7 @@
   </header>
   
   <main class="p-4 max-w-4xl mx-auto">
-    <!-- Simple Two-Way Calculator Section -->
+    <!-- Simple Two-Way Arbitrage Calculator Section -->
     <section id="calculator" class="bg-white p-6 rounded shadow mt-6">
       <h2 class="text-2xl font-bold mb-4">Two-Way Arbitrage Calculator</h2>
       <form id="calcForm" class="space-y-4">
@@ -51,6 +51,11 @@
             <option value="₹">INR (₹)</option>
           </select>
         </div>
+        <!-- New Stake Amount Input -->
+        <div>
+          <label for="stakeAmount" class="block text-sm font-medium text-gray-700">Stake Amount</label>
+          <input id="stakeAmount" type="number" step="any" placeholder="e.g., 100" class="mt-1 block w-full border border-gray-300 rounded p-2" />
+        </div>
         <div class="flex items-center justify-between">
           <button id="calculateBtn" type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Calculate
@@ -69,6 +74,11 @@
     <!-- Advanced Arbitrage Matrix Calculator Section -->
     <section id="advancedCalculator" class="bg-white p-6 rounded shadow mt-6">
       <h2 class="text-2xl font-bold mb-4">Advanced Arbitrage Matrix Calculator</h2>
+      <!-- New Stake Amount Input for Advanced Calculator -->
+      <div class="mb-4">
+        <label for="advancedStakeAmount" class="block text-sm font-medium text-gray-700">Stake Amount</label>
+        <input id="advancedStakeAmount" type="number" step="any" placeholder="e.g., 100" class="mt-1 block w-full border border-gray-300 rounded p-2" />
+      </div>
       <div>
         <h3 class="text-xl font-semibold">Manual Input</h3>
         <div class="overflow-x-auto">
@@ -249,7 +259,6 @@
       <script>document.write(new Date().getFullYear());</script>
       ADGSTUDIOS | Two Way Arbitrage Calculator. All rights reserved.
     </p>
-    <!-- center-->
     <br>
     <div class="flex items-center justify-center">
         <a href="https://clustrmaps.com/site/1c4yx"  title="ClustrMaps"><img src="//www.clustrmaps.com/map_v2.png?d=z9ePD342k15M77o08Py8Yjgg1UZtvNVmnyhshmg-E1Q&cl=ffffff" /></a>
@@ -270,9 +279,16 @@
       const a = parseFloat(oddsAInput.value);
       const b = parseFloat(oddsBInput.value);
       const currency = currencySelect.value;
+      const totalStake = parseFloat(document.getElementById('stakeAmount').value);
 
       if (isNaN(a) || isNaN(b) || a <= 0 || b <= 0) {
         resultDiv.textContent = 'Please enter valid positive numbers for both odds.';
+        graphSection.classList.add('hidden');
+        return;
+      }
+      
+      if (isNaN(totalStake) || totalStake <= 0) {
+        resultDiv.textContent = 'Please enter a valid positive stake amount.';
         graphSection.classList.add('hidden');
         return;
       }
@@ -287,8 +303,7 @@
         outputHTML += `<span class="text-green-600 font-bold">Arbitrage opportunity exists!</span><br>`;
         outputHTML += `Profit Margin: ${(profitMargin * 100).toFixed(2)}%<br>`;
         
-        // Calculate stake distribution for a total stake of 100 units
-        const totalStake = 100;
+        // Calculate stake distribution using the user-defined totalStake
         const stakeA = totalStake / (a * sumInverse);
         const stakeB = totalStake / (b * sumInverse);
         outputHTML += `For a total stake of ${currency}${totalStake}, bet:<br>`;
@@ -378,6 +393,13 @@
 
     // Calculate arbitrage from manual matrix
     calcMatrixBtn.addEventListener('click', () => {
+      const totalStake = parseFloat(document.getElementById('advancedStakeAmount').value);
+      if (isNaN(totalStake) || totalStake <= 0) {
+        advancedResultDiv.innerHTML = 'Please enter a valid positive stake amount.';
+        advancedGraphSection.classList.add('hidden');
+        return;
+      }
+      
       const table = manualMatrix;
       const headers = table.querySelectorAll('thead th');
       const outcomeRows = table.querySelectorAll('tbody tr');
@@ -411,7 +433,6 @@
         outcomes.forEach((outcome, index) => {
           resultHTML += `${outcome}: Best Odd = ${bestOdds[index]} from ${bestBookmakers[index]}<br>`;
         });
-        const totalStake = 100;
         let stakes = bestOdds.map(odd => totalStake / (odd * sumReciprocals));
         resultHTML += `<br>For a total stake of ${totalStake}, bet:<br>`;
         outcomes.forEach((outcome, index) => {
@@ -449,11 +470,17 @@
       }
     });
 
-    // Calculate arbitrage from Excel file
+    // Calculate arbitrage from Excel file in advanced matrix
     calcExcelBtn.addEventListener('click', () => {
       const file = excelUpload.files[0];
       if (!file) {
         alert("Please upload an Excel file.");
+        return;
+      }
+      const totalStake = parseFloat(document.getElementById('advancedStakeAmount').value);
+      if (isNaN(totalStake) || totalStake <= 0) {
+        advancedResultDiv.innerHTML = 'Please enter a valid positive stake amount.';
+        advancedGraphSection.classList.add('hidden');
         return;
       }
       const reader = new FileReader();
@@ -497,7 +524,6 @@
           outcomes.forEach((outcome, index) => {
             resultHTML += `${outcome}: Best Odd = ${bestOdds[index]} from ${bestBookmakers[index]}<br>`;
           });
-          const totalStake = 100;
           let stakes = bestOdds.map(odd => totalStake / (odd * sumReciprocals));
           resultHTML += `<br>For a total stake of ${totalStake}, bet:<br>`;
           outcomes.forEach((outcome, index) => {
@@ -534,30 +560,6 @@
         }
       };
       reader.readAsArrayBuffer(file);
-    });
-
-    // ------------------ Download Sample Excel Matrix ------------------
-    const downloadSampleBtn = document.getElementById('downloadSampleBtn');
-    downloadSampleBtn.addEventListener('click', () => {
-      // Create sample matrix data: header row and two outcome rows
-      const sampleData = [
-        ["Outcome/Bookmaker", "Bookmaker 1", "Bookmaker 2", "Bookmaker 3", "Bookmaker 4"],
-        ["Home Win (Man UTD)", 1.80, 1.85, 1.90, 1.95],
-        ["Draw", 4.50, 4.40, 4.60, 4.55]
-      ];
-      // Convert data to worksheet using SheetJS
-      const ws = XLSX.utils.aoa_to_sheet(sampleData);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Arbitrage");
-      // Generate binary array and create a Blob for download
-      const wbout = XLSX.write(wb, { bookType:'xlsx', type:'array' });
-      const blob = new Blob([wbout], { type: "application/octet-stream" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "sample_arbitrage_matrix.xlsx";
-      a.click();
-      URL.revokeObjectURL(url);
     });
   </script>
 </body>
