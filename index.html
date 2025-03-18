@@ -103,6 +103,65 @@
     </section>
     
     <!-- ------------------ Mathematical Derivations & Proofs ------------------ -->
+    <section id="calculator" class="bg-white p-6 rounded shadow mt-6">
+      <h2 class="text-2xl font-bold mb-4">Two-Way Arbitrage Calculator</h2>
+      <form id="calcForm" class="space-y-4">
+        <div>
+          <label for="oddsA" class="block text-sm font-medium text-gray-700">Odds for Outcome A</label>
+          <input id="oddsA" type="number" step="any" placeholder="e.g., 1.70" class="mt-1 block w-full border border-gray-300 rounded p-2" />
+        </div>
+        <div>
+          <label for="oddsB" class="block text-sm font-medium text-gray-700">Odds for Outcome B</label>
+          <input id="oddsB" type="number" step="any" placeholder="e.g., 3.32" class="mt-1 block w-full border border-gray-300 rounded p-2" />
+        </div>
+        <div>
+          <label for="currency" class="block text-sm font-medium text-gray-700">Currency</label>
+          <select id="currency" class="mt-1 block w-full border border-gray-300 rounded p-2">
+            <option value="$">USD ($)</option>
+            <option value="€">EUR (€)</option>
+            <option value="£">GBP (£)</option>
+            <option value="¥">JPY (¥)</option>
+            <option value="₹">INR (₹)</option>
+          </select>
+        </div>
+        <div>
+          <label for="stakeAmount" class="block text-sm font-medium text-gray-700">Stake Amount</label>
+          <input id="stakeAmount" type="number" step="any" placeholder="e.g., 100" class="mt-1 block w-full border border-gray-300 rounded p-2" />
+        </div>
+        <div class="flex items-center justify-between">
+          <button id="calculateBtn" type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Calculate
+          </button>
+        </div>
+      </form>
+      <div id="result" class="mt-6 text-center text-lg"></div>
+      <section id="graphSection" class="bg-white p-6 rounded shadow mt-6 hidden">
+        <h2 class="text-2xl font-bold mb-4">Stake Distribution Graph</h2>
+        <canvas id="stakeChart"></canvas>
+      </section>
+    </section>
+    
+    <!-- ------------------ Advanced Arbitrage Calculator (Matrix & Multi‑Match) ------------------ -->
+    <section id="advancedCalculator" class="bg-white p-6 rounded shadow mt-6">
+      <h2 class="text-2xl font-bold mb-4">Advanced Arbitrage Calculator</h2>
+      <div class="mb-4">
+        <label for="advancedStakeAmount" class="block text-sm font-medium text-gray-700">Stake Amount</label>
+        <input id="advancedStakeAmount" type="number" step="any" placeholder="e.g., 100" class="mt-1 block w-full border border-gray-300 rounded p-2" />
+      </div>
+      <!-- Container for match tables -->
+      <div id="advancedMatchContainer"></div>
+      <div class="flex space-x-4 mt-4">
+        <button id="addMatchBtn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add Match</button>
+        <button id="calcAdvancedBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Calculate Advanced Arbitrage</button>
+      </div>
+      <div id="advancedResult" class="mt-6 text-center text-lg"></div>
+      <section id="advancedGraphSection" class="mt-6 hidden">
+        <h2 class="text-2xl font-bold mb-4">Advanced Stake Distribution Graph</h2>
+        <canvas id="advancedChart"></canvas>
+      </section>
+    </section>
+    
+    <!-- ------------------ Mathematical Derivations & Proofs ------------------ -->
     <section id="mathSection" class="bg-white p-6 rounded shadow mt-6">
       <h2 class="text-2xl font-bold mb-4">Mathematical Derivations & Proofs</h2>
       <div class="prose">
@@ -297,25 +356,50 @@
         return;
       }
 
-      // Calculate the sum of the inverses of the odds
       const sumInverse = (1 / a) + (1 / b);
       let outputHTML = '';
       
-      // Check arbitrage condition
       if (sumInverse < 1) {
         const profitMargin = 1 - sumInverse;
         outputHTML += `<span class="text-green-600 font-bold">Arbitrage opportunity exists!</span><br>`;
         outputHTML += `Profit Margin: ${(profitMargin * 100).toFixed(2)}%<br>`;
-        
-        // Calculate stake distribution using the user-defined totalStake
         const stakeA = totalStake / (a * sumInverse);
         const stakeB = totalStake / (b * sumInverse);
-        outputHTML += `For a total stake of ${currency}${totalStake}, bet:<br>`;
-        outputHTML += `- Outcome A: ${currency}${stakeA.toFixed(2)}<br>`;
-        outputHTML += `- Outcome B: ${currency}${stakeB.toFixed(2)}<br>`;
+        const commonReturn = a * stakeA;
+        const totalProfit = commonReturn - totalStake;
+        
+        let tableHTML = `
+          <table class="min-w-full mt-4 border-collapse border border-gray-300">
+            <thead>
+              <tr>
+                <th class="px-4 py-2 border">Outcome</th>
+                <th class="px-4 py-2 border">Odds</th>
+                <th class="px-4 py-2 border">Stake (${currency})</th>
+                <th class="px-4 py-2 border">Return (${currency})</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="px-4 py-2 border">Outcome A</td>
+                <td class="px-4 py-2 border">${a.toFixed(2)}</td>
+                <td class="px-4 py-2 border">${stakeA.toFixed(2)}</td>
+                <td class="px-4 py-2 border">${(a * stakeA).toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-2 border">Outcome B</td>
+                <td class="px-4 py-2 border">${b.toFixed(2)}</td>
+                <td class="px-4 py-2 border">${stakeB.toFixed(2)}</td>
+                <td class="px-4 py-2 border">${(b * stakeB).toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+        `;
+        
+        outputHTML += `<br><strong>Bets Table:</strong><br>` + tableHTML;
+        outputHTML += `<br>Total Return: ${currency}${commonReturn.toFixed(2)}<br>`;
+        outputHTML += `Total Profit: ${currency}${totalProfit.toFixed(2)}<br>`;
         resultDiv.innerHTML = outputHTML;
 
-        // Render graph
         graphSection.classList.remove('hidden');
         const ctx = document.getElementById('stakeChart').getContext('2d');
         if (stakeChart) stakeChart.destroy();
@@ -355,7 +439,6 @@
     let advancedChart = null;
     let matchCounter = 0;
 
-    // Function to create a new match table with match naming, delete match, and in–table delete options
     function createMatchTable() {
       matchCounter++;
       const matchDiv = document.createElement('div');
@@ -422,13 +505,11 @@
       `;
       advancedMatchContainer.appendChild(matchDiv);
 
-      // Attach event listener to delete match button
       const deleteMatchBtn = matchDiv.querySelector('.deleteMatchBtn');
       deleteMatchBtn.addEventListener('click', () => {
         matchDiv.remove();
       });
 
-      // Attach event listeners for existing deleteOutcome buttons in the table
       const outcomeDeleteButtons = matchDiv.querySelectorAll('.deleteOutcome');
       outcomeDeleteButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -438,7 +519,6 @@
         });
       });
 
-      // Attach event listeners for existing deleteBookmaker buttons in the header
       const bookmakerDeleteButtons = matchDiv.querySelectorAll('.deleteBookmaker');
       bookmakerDeleteButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -447,7 +527,6 @@
           const table = btn.closest('table');
           const index = Array.from(th.parentElement.children).indexOf(th);
           th.remove();
-          // Remove corresponding cell from each row in tbody
           table.querySelectorAll('tbody tr').forEach(row => {
             const cells = row.querySelectorAll('td');
             if(cells[index]) cells[index].remove();
@@ -455,20 +534,17 @@
         });
       });
 
-      // Event listener for adding a new outcome row
       const addOutcomeBtn = matchDiv.querySelector('.addOutcomeBtn');
       addOutcomeBtn.addEventListener('click', () => {
         const table = matchDiv.querySelector('table');
         const tbody = table.querySelector('tbody');
         const newRow = document.createElement('tr');
-        // Outcome cell with delete button
         newRow.innerHTML = `
           <td class="px-2 py-1 border relative">
             <input type="text" value="Outcome" class="w-full p-1 border"/>
             <button class="deleteOutcome absolute top-0 right-0" title="Delete Outcome">🗑️</button>
           </td>
         `;
-        // Add empty cells for each existing bookmaker (based on header count minus one)
         const headerCount = table.querySelectorAll('thead tr th').length;
         for (let i = 1; i < headerCount; i++) {
           const cell = document.createElement('td');
@@ -477,7 +553,6 @@
           newRow.appendChild(cell);
         }
         tbody.appendChild(newRow);
-        // Attach delete event for the new outcome row
         const newDeleteBtn = newRow.querySelector('.deleteOutcome');
         newDeleteBtn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -485,7 +560,6 @@
         });
       });
 
-      // Event listener for adding a new bookmaker column
       const addBookmakerBtn = matchDiv.querySelector('.addBookmakerBtn');
       addBookmakerBtn.addEventListener('click', () => {
         const table = matchDiv.querySelector('table');
@@ -497,14 +571,12 @@
           <button class="deleteBookmaker absolute top-0 right-0" title="Delete Bookmaker">🗑️</button>
         `;
         theadRow.appendChild(newTh);
-        // Add new cell to each row in tbody
         table.querySelectorAll('tbody tr').forEach(row => {
           const newTd = document.createElement('td');
           newTd.className = 'px-2 py-1 border';
           newTd.innerHTML = '<input type="number" step="any" placeholder="Odds" class="w-full p-1 border"/>';
           row.appendChild(newTd);
         });
-        // Attach event listener for the new deleteBookmaker button
         const newDeleteBtn = newTh.querySelector('.deleteBookmaker');
         newDeleteBtn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -518,11 +590,9 @@
       });
     }
 
-    // Initially add one match table
     createMatchTable();
     addMatchBtn.addEventListener('click', createMatchTable);
 
-    // Function to compute Cartesian product of arrays
     function cartesianProduct(arrays) {
       return arrays.reduce((acc, curr) => {
         let result = [];
@@ -543,7 +613,6 @@
         return;
       }
 
-      // Gather best odds arrays from each match table
       const matchTables = document.querySelectorAll('.matchTable');
       let bestOddsArrays = [];
       let singleMatchResults = "";
@@ -556,7 +625,6 @@
         let bestOdds = [];
         tbodyRows.forEach(row => {
           const cells = row.querySelectorAll('td');
-          // Outcome name from first cell
           const outcomeName = cells[0].querySelector('input').value;
           let bestValue = -Infinity, bestBookmaker = "";
           for (let i = 1; i < cells.length; i++) {
@@ -578,7 +646,7 @@
         });
         bestOddsArrays.push(bestOdds);
 
-        // For single-match arbitrage, compute the matrix arbitrage for that match
+        // Single-match arbitrage (matrix) case with detailed table
         if (!multiMatch) {
           const sumReciprocals = bestOdds.reduce((sum, obj) => sum + (1/obj.odd), 0);
           if (sumReciprocals < 1) {
@@ -586,24 +654,46 @@
             singleMatchResults += `<span class="text-green-600 font-bold">Arbitrage opportunity exists in ${matchName}!</span><br>`;
             singleMatchResults += `Profit Margin: ${(profitMargin * 100).toFixed(2)}%<br>`;
             singleMatchResults += `<strong>Details:</strong><br>`;
+            const commonReturn = totalStake / sumReciprocals;
+            const profit = commonReturn - totalStake;
+            let matchTableHTML = `
+              <table class="min-w-full mt-4 border-collapse border border-gray-300">
+                <thead>
+                  <tr>
+                    <th class="px-4 py-2 border">Outcome</th>
+                    <th class="px-4 py-2 border">Odds</th>
+                    <th class="px-4 py-2 border">Stake</th>
+                    <th class="px-4 py-2 border">Profit</th>
+                    <th class="px-4 py-2 border">Stake + Profit</th>
+                  </tr>
+                </thead>
+                <tbody>
+            `;
             bestOdds.forEach((obj, index) => {
-              singleMatchResults += `Outcome ${index+1}: ${obj.outcomeName} (Bookmaker: ${obj.bookmaker}, Odd: ${obj.odd})<br>`;
+              const stake = totalStake / (obj.odd * sumReciprocals);
+              matchTableHTML += `<tr>
+                <td class="px-4 py-2 border">${obj.outcomeName} (Bookmaker: ${obj.bookmaker})</td>
+                <td class="px-4 py-2 border">${obj.odd.toFixed(2)}</td>
+                <td class="px-4 py-2 border">${stake.toFixed(2)}</td>
+                <td class="px-4 py-2 border">${profit.toFixed(2)}</td>
+                <td class="px-4 py-2 border">${commonReturn.toFixed(2)}</td>
+              </tr>`;
             });
-            singleMatchResults += `<br>`;
+            matchTableHTML += `</tbody></table>`;
+            singleMatchResults += matchTableHTML + `<br>`;
           } else {
             singleMatchResults += `<span class="text-red-600 font-bold">No arbitrage opportunity in ${matchName}.</span><br><br>`;
           }
         }
       });
 
-      // If only one match table, show the single-match result
       if (!multiMatch) {
         advancedResultDiv.innerHTML = singleMatchResults;
         advancedGraphSection.classList.add('hidden');
         return;
       }
 
-      // Multi-match arbitrage: compute Cartesian product of best odds arrays
+      // Multi-match arbitrage computation (remains unchanged)
       const combinations = cartesianProduct(bestOddsArrays);
       let comboData = combinations.map(combo => {
         const combinedOdd = combo.reduce((prod, obj) => prod * obj.odd, 1);
@@ -615,18 +705,43 @@
         const profitMargin = 1 - sumReciprocals;
         resultHTML += `<span class="text-green-600 font-bold">Multi-match arbitrage opportunity exists!</span><br>`;
         resultHTML += `Profit Margin: ${(profitMargin * 100).toFixed(2)}%<br><br>`;
-        resultHTML += `<strong>Stake Distribution for Each Outcome Combination:</strong><br>`;
+        const commonReturn = totalStake / sumReciprocals;
+        const totalProfit = commonReturn - totalStake;
+        
+        let tableHTML = `
+          <table class="min-w-full mt-4 border-collapse border border-gray-300">
+            <thead>
+              <tr>
+                <th class="px-4 py-2 border">Combination</th>
+                <th class="px-4 py-2 border">Outcome Details</th>
+                <th class="px-4 py-2 border">Combined Odd</th>
+                <th class="px-4 py-2 border">Stake</th>
+                <th class="px-4 py-2 border">Return</th>
+                <th class="px-4 py-2 border">Profit</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
         comboData.forEach((obj, index) => {
           const stake = totalStake / (obj.combinedOdd * sumReciprocals);
           obj.stake = stake;
-          // Build a detailed label for each match in the combination
           const label = obj.combo.map(detail => {
             return `${detail.matchName} – ${detail.outcomeName} (Bookmaker: ${detail.bookmaker}, Odd: ${detail.odd})`;
           }).join(' | ');
-          resultHTML += `Combination ${index+1}: ${label} — Stake: ${stake.toFixed(2)}<br>`;
+          tableHTML += `<tr>
+            <td class="px-4 py-2 border">Combo ${index+1}</td>
+            <td class="px-4 py-2 border">${label}</td>
+            <td class="px-4 py-2 border">${obj.combinedOdd.toFixed(2)}</td>
+            <td class="px-4 py-2 border">${stake.toFixed(2)}</td>
+            <td class="px-4 py-2 border">${(obj.combinedOdd * stake).toFixed(2)}</td>
+            <td class="px-4 py-2 border">${(commonReturn - totalStake).toFixed(2)}</td>
+          </tr>`;
         });
+        tableHTML += `</tbody></table>`;
+        resultHTML += `<strong>Stake Distribution for Each Outcome Combination:</strong><br>` + tableHTML;
+        resultHTML += `<br>Total Return: ${commonReturn.toFixed(2)}<br>`;
+        resultHTML += `Total Profit: ${totalProfit.toFixed(2)}<br>`;
         advancedResultDiv.innerHTML = resultHTML;
-        // Render graph
         advancedGraphSection.classList.remove('hidden');
         const ctxAdv = document.getElementById('advancedChart').getContext('2d');
         if (advancedChart) advancedChart.destroy();
