@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arbitrage Profitability Calculator</title>
+  <meta name="description" content="Calculate two-way and multi-outcome arbitrage opportunities with detailed profit margins, currency conversion, Excel upload, and complete mathematical proofs. Check your arbitrage profits with our advanced interactive calculator." />
+  <meta name="keywords" content="arbitrage, calculator, profit margin, currency, sports betting arbitrage, matrix arbitrage, Excel upload, sample Excel, lemma, theorem, math derivation, SEO" />
+  <link href="https://cdn.tailwindcss.com" rel="stylesheet" />
+  <!-- Chart.js for graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- MathJax for rendering LaTeX -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+  <!-- Tailwind CSS Browser Plugin -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- SheetJS for Excel parsing and generation -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9261174368196541"
+     crossorigin="anonymous"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <header class="bg-blue-600 text-white p-4 shadow">
+    <h1 class="text-3xl text-center font-bold">Arbitrage Profitability Calculator</h1>
+    <p class="text-center">Calculate your arbitrage opportunities with detailed math, proofs, Excel upload, sample downloads and graphs.</p>
+  </header>
+  
+  <main class="p-4 max-w-4xl mx-auto">
+    <!-- Simple Two-Way Calculator Section -->
+    <section id="calculator" class="bg-white p-6 rounded shadow mt-6">
+      <h2 class="text-2xl font-bold mb-4">Two-Way Arbitrage Calculator</h2>
+      <form id="calcForm" class="space-y-4">
+        <div>
+          <label for="oddsA" class="block text-sm font-medium text-gray-700">Odds for Outcome A</label>
+          <input id="oddsA" type="number" step="any" placeholder="e.g., 1.70" class="mt-1 block w-full border border-gray-300 rounded p-2" />
+        </div>
+        <div>
+          <label for="oddsB" class="block text-sm font-medium text-gray-700">Odds for Outcome B</label>
+          <input id="oddsB" type="number" step="any" placeholder="e.g., 3.32" class="mt-1 block w-full border border-gray-300 rounded p-2" />
+        </div>
+        <div>
+          <label for="currency" class="block text-sm font-medium text-gray-700">Currency</label>
+          <select id="currency" class="mt-1 block w-full border border-gray-300 rounded p-2">
+            <option value="$">USD ($)</option>
+            <option value="€">EUR (€)</option>
+            <option value="£">GBP (£)</option>
+            <option value="¥">JPY (¥)</option>
+            <option value="₹">INR (₹)</option>
+          </select>
+        </div>
+        <div class="flex items-center justify-between">
+          <button id="calculateBtn" type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Calculate
+          </button>
+        </div>
+      </form>
+      <div id="result" class="mt-6 text-center text-lg"></div>
+    </section>
+    
+    <!-- Graph Section for Simple Calculator -->
+    <section id="graphSection" class="bg-white p-6 rounded shadow mt-6 hidden">
+      <h2 class="text-2xl font-bold mb-4">Stake Distribution Graph</h2>
+      <canvas id="stakeChart"></canvas>
+    </section>
+    
+    <!-- Advanced Arbitrage Matrix Calculator Section -->
+    <section id="advancedCalculator" class="bg-white p-6 rounded shadow mt-6">
+      <h2 class="text-2xl font-bold mb-4">Advanced Arbitrage Matrix Calculator</h2>
+      <div>
+        <h3 class="text-xl font-semibold">Manual Input</h3>
+        <div class="overflow-x-auto">
+          <table id="manualMatrix" class="min-w-full border border-gray-300">
+            <thead>
+              <tr>
+                <th class="px-2 py-1 border">Outcome / Bookmaker</th>
+                <th class="px-2 py-1 border"><input type="text" value="Bookmaker 1" class="w-full p-1 border"/></th>
+                <th class="px-2 py-1 border"><input type="text" value="Bookmaker 2" class="w-full p-1 border"/></th>
+                <th class="px-2 py-1 border"><input type="text" value="Bookmaker 3" class="w-full p-1 border"/></th>
+                <th class="px-2 py-1 border"><input type="text" value="Bookmaker 4" class="w-full p-1 border"/></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="px-2 py-1 border"><input type="text" value="Home Win (Man UTD)" class="w-full p-1 border"/></td>
+                <td class="px-2 py-1 border"><input type="number" step="any" class="w-full p-1 border" placeholder="Odds" value="1.80"/></td>
+                <td class="px-2 py-1 border"><input type="number" step="any" class="w-full p-1 border" placeholder="Odds" value="1.85"/></td>
+                <td class="px-2 py-1 border"><input type="number" step="any" class="w-full p-1 border" placeholder="Odds" value="1.90"/></td>
+                <td class="px-2 py-1 border"><input type="number" step="any" class="w-full p-1 border" placeholder="Odds" value="1.95"/></td>
+              </tr>
+              <tr>
+                <td class="px-2 py-1 border"><input type="text" value="Draw" class="w-full p-1 border"/></td>
+                <td class="px-2 py-1 border"><input type="number" step="any" class="w-full p-1 border" placeholder="Odds" value="4.50"/></td>
+                <td class="px-2 py-1 border"><input type="number" step="any" class="w-full p-1 border" placeholder="Odds" value="4.40"/></td>
+                <td class="px-2 py-1 border"><input type="number" step="any" class="w-full p-1 border" placeholder="Odds" value="4.60"/></td>
+                <td class="px-2 py-1 border"><input type="number" step="any" class="w-full p-1 border" placeholder="Odds" value="4.55"/></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="flex space-x-4 mt-4">
+          <button id="addRowBtn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add Row</button>
+          <button id="addColBtn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add Column</button>
+          <button id="calcMatrixBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Calculate Matrix Arbitrage</button>
+        </div>
+      </div>
+      <div class="mt-4">
+        <h3 class="text-xl font-semibold">Excel Upload</h3>
+        <input type="file" id="excelUpload" accept=".xlsx, .xls" class="mt-2 p-2 border rounded"/>
+        <button id="calcExcelBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2">Calculate from Excel</button>
+      </div>
+      <!-- New button to download a sample Excel file -->
+      <div class="mt-4">
+        <button id="downloadSampleBtn" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+          Download Sample Excel Matrix
+        </button>
+      </div>
+      <div id="advancedResult" class="mt-6 text-center text-lg"></div>
+      <div id="advancedGraphSection" class="mt-6 hidden">
+        <h2 class="text-2xl font-bold mb-4">Advanced Stake Distribution Graph</h2>
+        <canvas id="advancedChart"></canvas>
+      </div>
+    </section>
+    
+    <!-- Mathematical Derivations Section -->
+    <section id="mathSection" class="bg-white p-6 rounded shadow mt-6">
+      <h2 class="text-2xl font-bold mb-4">Mathematical Derivations & Proofs</h2>
+      <div class="prose">
+        <!-- Two-Way Arbitrage Derivation -->
+        <p>
+          We begin by assuming a total stake \( T \) distributed between two outcomes:
+          \[
+          x + y = T.
+          \]
+        </p>
+        <p>
+          For outcome A with odds \( a \) and outcome B with odds \( b \), the returns are:
+          \[
+          \text{Return A} = a \cdot x, \quad \text{Return B} = b \cdot y.
+          \]
+        </p>
+        <p>
+          Setting the returns equal for an arbitrage opportunity:
+          \[
+          a \cdot x = b \cdot y = R.
+          \]
+        </p>
+        <p>
+          This allows us to express the bets in terms of \( R \):
+          \[
+          x = \frac{R}{a}, \quad y = \frac{R}{b}.
+          \]
+        </p>
+        <p>
+          Substituting back into the total stake:
+          \[
+          \frac{R}{a} + \frac{R}{b} = T \quad \Rightarrow \quad R \left( \frac{1}{a} + \frac{1}{b} \right) = T.
+          \]
+        </p>
+        <p>
+          Hence, the common return is:
+          \[
+          R = \frac{T}{\frac{1}{a} + \frac{1}{b}}.
+          \]
+        </p>
+        <p>
+          For an arbitrage to be profitable, we require that \( R > T \), which simplifies to:
+          \[
+          \frac{1}{a} + \frac{1}{b} < 1.
+          \]
+        </p>
+        <h3>Lemma (Arbitrage Condition)</h3>
+        <p>
+          <strong>Lemma:</strong> For any two odds \( a \) and \( b \), if 
+          \[
+          \frac{1}{a} + \frac{1}{b} < 1,
+          \]
+          then there exists a two‑way arbitrage opportunity.
+        </p>
+        <h3>Theorem (Profitability Theorem)</h3>
+        <p>
+          <strong>Theorem:</strong> Given a total stake \( T \) and odds \( a \) and \( b \), the arbitrage profit margin \( P \) is given by:
+          \[
+          P = 1 - \left(\frac{1}{a} + \frac{1}{b}\right),
+          \]
+          and an arbitrage opportunity exists if and only if \( P > 0 \).
+        </p>
+        <p>
+          <em>Proof:</em> Starting from the condition for equal returns:
+          \[
+          a \cdot x = b \cdot y = R,
+          \]
+          with the total stake constraint \( x + y = T \), we have:
+          \[
+          \frac{R}{a} + \frac{R}{b} = T \quad \Rightarrow \quad R = \frac{T}{\frac{1}{a} + \frac{1}{b}}.
+          \]
+          For profitability, we need \( R > T \), so:
+          \[
+          \frac{T}{\frac{1}{a} + \frac{1}{b}} > T \quad \Rightarrow \quad \frac{1}{a} + \frac{1}{b} < 1.
+          \]
+          The profit margin relative to the stake is therefore:
+          \[
+          \frac{R - T}{T} = 1 - \left(\frac{1}{a} + \frac{1}{b}\right).
+          \]
+          This completes the proof.
+        </p>
+        <hr>
+        <!-- Advanced Matrix Arbitrage Derivation -->
+        <p>
+          In a market with \( n \) outcomes and \( k \) bookmakers, let the odds provided for outcome \( i \) by bookmaker \( j \) be denoted as \( o_{ij} \). Define the best odds for outcome \( i \) as:
+          \[
+          o_i^* = \max_{j=1,\dots,k} o_{ij}.
+          \]
+          Then an arbitrage opportunity exists if and only if:
+          \[
+          \sum_{i=1}^{n} \frac{1}{o_i^*} < 1.
+          \]
+          The profit margin is:
+          \[
+          1 - \sum_{i=1}^{n} \frac{1}{o_i^*}.
+          \]
+        </p>
+        <h3>Advanced Lemma (Best Odds Selection)</h3>
+        <p>
+          <strong>Lemma:</strong> For a given outcome \( i \) and a set of \( k \) bookmakers, the optimal odds \( o_i^* \) is achieved by selecting:
+          \[
+          o_i^* = \max_{1 \leq j \leq k} o_{ij}.
+          \]
+        </p>
+        <h3>Advanced Theorem (Matrix Arbitrage Theorem)</h3>
+        <p>
+          <strong>Theorem:</strong> Given a matrix of odds \( \{ o_{ij} \} \) for \( n \) outcomes and \( k \) bookmakers, an arbitrage opportunity exists if and only if:
+          \[
+          \sum_{i=1}^{n} \frac{1}{\max_{1 \leq j \leq k} o_{ij}} < 1.
+          \]
+          Moreover, the profit margin is:
+          \[
+          1 - \sum_{i=1}^{n} \frac{1}{\max_{1 \leq j \leq k} o_{ij}}.
+          \]
+        </p>
+      </div>
+    </section>
+  </main>
+  
+  <footer class="bg-gray-800 text-white p-4 mt-6 text-center">
+    <p>&copy; 
+      <script>document.write(new Date().getFullYear());</script>
+      ADGSTUDIOS | Two Way Arbitrage Calculator. All rights reserved.
+    </p>
+  </footer>
+  
+  <script>
+    // ------------------ Simple Two-Way Arbitrage Calculator ------------------
+    const oddsAInput = document.getElementById('oddsA');
+    const oddsBInput = document.getElementById('oddsB');
+    const resultDiv = document.getElementById('result');
+    const calculateBtn = document.getElementById('calculateBtn');
+    const currencySelect = document.getElementById('currency');
+    const graphSection = document.getElementById('graphSection');
+    let stakeChart = null;
+
+    calculateBtn.addEventListener('click', () => {
+      const a = parseFloat(oddsAInput.value);
+      const b = parseFloat(oddsBInput.value);
+      const currency = currencySelect.value;
+
+      if (isNaN(a) || isNaN(b) || a <= 0 || b <= 0) {
+        resultDiv.textContent = 'Please enter valid positive numbers for both odds.';
+        graphSection.classList.add('hidden');
+        return;
+      }
+
+      // Calculate the sum of the inverses of the odds
+      const sumInverse = (1 / a) + (1 / b);
+      let outputHTML = '';
+      
+      // Check arbitrage condition
+      if (sumInverse < 1) {
+        const profitMargin = 1 - sumInverse;
+        outputHTML += `<span class="text-green-600 font-bold">Arbitrage opportunity exists!</span><br>`;
+        outputHTML += `Profit Margin: ${(profitMargin * 100).toFixed(2)}%<br>`;
+        
+        // Calculate stake distribution for a total stake of 100 units
+        const totalStake = 100;
+        const stakeA = totalStake / (a * sumInverse);
+        const stakeB = totalStake / (b * sumInverse);
+        outputHTML += `For a total stake of ${currency}${totalStake}, bet:<br>`;
+        outputHTML += `- Outcome A: ${currency}${stakeA.toFixed(2)}<br>`;
+        outputHTML += `- Outcome B: ${currency}${stakeB.toFixed(2)}<br>`;
+        resultDiv.innerHTML = outputHTML;
+
+        // Render graph
+        graphSection.classList.remove('hidden');
+        const ctx = document.getElementById('stakeChart').getContext('2d');
+        if (stakeChart) stakeChart.destroy();
+        stakeChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Outcome A', 'Outcome B'],
+            datasets: [{
+              label: 'Stake Distribution',
+              data: [stakeA, stakeB],
+              backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+              borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 159, 64, 1)'],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: `Stake in ${currency}` }
+              }
+            }
+          }
+        });
+      } else {
+        resultDiv.innerHTML = `<span class="text-red-600 font-bold">No arbitrage opportunity.</span>`;
+        graphSection.classList.add('hidden');
+      }
+    });
+
+    // ------------------ Advanced Arbitrage Matrix Calculator ------------------
+    const addRowBtn = document.getElementById('addRowBtn');
+    const addColBtn = document.getElementById('addColBtn');
+    const calcMatrixBtn = document.getElementById('calcMatrixBtn');
+    const manualMatrix = document.getElementById('manualMatrix');
+    const advancedResultDiv = document.getElementById('advancedResult');
+    const excelUpload = document.getElementById('excelUpload');
+    const calcExcelBtn = document.getElementById('calcExcelBtn');
+    const advancedGraphSection = document.getElementById('advancedGraphSection');
+    let advancedChart = null;
+
+    // Add new row to manual matrix
+    addRowBtn.addEventListener('click', () => {
+      const tbody = manualMatrix.querySelector('tbody');
+      const newRow = document.createElement('tr');
+      // Outcome name cell
+      const outcomeCell = document.createElement('td');
+      outcomeCell.className = 'px-2 py-1 border';
+      outcomeCell.innerHTML = '<input type="text" value="Outcome" class="w-full p-1 border"/>';
+      newRow.appendChild(outcomeCell);
+      // Add cells for each bookmaker (based on header count)
+      const headerCells = manualMatrix.querySelectorAll('thead th');
+      for (let i = 1; i < headerCells.length; i++) {
+        const cell = document.createElement('td');
+        cell.className = 'px-2 py-1 border';
+        cell.innerHTML = '<input type="number" step="any" class="w-full p-1 border" placeholder="Odds"/>';
+        newRow.appendChild(cell);
+      }
+      tbody.appendChild(newRow);
+    });
+
+    // Add new column to manual matrix
+    addColBtn.addEventListener('click', () => {
+      // Add header cell for new bookmaker
+      const theadRow = manualMatrix.querySelector('thead tr');
+      const newHeader = document.createElement('th');
+      newHeader.className = 'px-2 py-1 border';
+      newHeader.innerHTML = '<input type="text" value="Bookmaker" class="w-full p-1 border"/>';
+      theadRow.appendChild(newHeader);
+      // Add new cell for each row in tbody
+      const tbodyRows = manualMatrix.querySelectorAll('tbody tr');
+      tbodyRows.forEach(row => {
+        const newCell = document.createElement('td');
+        newCell.className = 'px-2 py-1 border';
+        newCell.innerHTML = '<input type="number" step="any" class="w-full p-1 border" placeholder="Odds"/>';
+        row.appendChild(newCell);
+      });
+    });
+
+    // Calculate arbitrage from manual matrix
+    calcMatrixBtn.addEventListener('click', () => {
+      const table = manualMatrix;
+      const headers = table.querySelectorAll('thead th');
+      const outcomeRows = table.querySelectorAll('tbody tr');
+      let bestOdds = [];
+      let bestBookmakers = [];
+      let outcomes = [];
+      outcomeRows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const outcomeName = cells[0].querySelector('input').value || "Outcome";
+        outcomes.push(outcomeName);
+        let maxOdd = 0;
+        let bookmakerName = "";
+        for (let i = 1; i < cells.length; i++) {
+          const odd = parseFloat(cells[i].querySelector('input').value);
+          if (!isNaN(odd) && odd > maxOdd) {
+            maxOdd = odd;
+            bookmakerName = headers[i].querySelector('input').value || `Bookmaker ${i}`;
+          }
+        }
+        bestOdds.push(maxOdd);
+        bestBookmakers.push(bookmakerName);
+      });
+
+      const sumReciprocals = bestOdds.reduce((sum, odd) => sum + (1/odd), 0);
+      let resultHTML = "";
+      if (sumReciprocals < 1) {
+        const profitMargin = 1 - sumReciprocals;
+        resultHTML += `<span class="text-green-600 font-bold">Arbitrage opportunity exists!</span><br>`;
+        resultHTML += `Profit Margin: ${(profitMargin * 100).toFixed(2)}%<br>`;
+        resultHTML += `<strong>Best Odds by Outcome:</strong><br>`;
+        outcomes.forEach((outcome, index) => {
+          resultHTML += `${outcome}: Best Odd = ${bestOdds[index]} from ${bestBookmakers[index]}<br>`;
+        });
+        const totalStake = 100;
+        let stakes = bestOdds.map(odd => totalStake / (odd * sumReciprocals));
+        resultHTML += `<br>For a total stake of ${totalStake}, bet:<br>`;
+        outcomes.forEach((outcome, index) => {
+          resultHTML += `${outcome} (${bestBookmakers[index]}): ${stakes[index].toFixed(2)}<br>`;
+        });
+        advancedResultDiv.innerHTML = resultHTML;
+        // Render advanced graph
+        advancedGraphSection.classList.remove('hidden');
+        const ctx2 = document.getElementById('advancedChart').getContext('2d');
+        if (advancedChart) advancedChart.destroy();
+        advancedChart = new Chart(ctx2, {
+          type: 'bar',
+          data: {
+            labels: outcomes,
+            datasets: [{
+              label: 'Stake Distribution',
+              data: stakes,
+              backgroundColor: 'rgba(153, 102, 255, 0.6)',
+              borderColor: 'rgba(153, 102, 255, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: 'Stake' }
+              }
+            }
+          }
+        });
+      } else {
+        advancedResultDiv.innerHTML = `<span class="text-red-600 font-bold">No arbitrage opportunity.</span>`;
+        advancedGraphSection.classList.add('hidden');
+      }
+    });
+
+    // Calculate arbitrage from Excel file
+    calcExcelBtn.addEventListener('click', () => {
+      const file = excelUpload.files[0];
+      if (!file) {
+        alert("Please upload an Excel file.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, {type: 'array'});
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+        if (jsonData.length < 2) {
+          alert("Excel file format is not valid.");
+          return;
+        }
+        const headers = jsonData[0];
+        let outcomes = [];
+        let bestOdds = [];
+        let bestBookmakers = [];
+        for (let i = 1; i < jsonData.length; i++) {
+          const row = jsonData[i];
+          const outcomeName = row[0] || "Outcome " + i;
+          outcomes.push(outcomeName);
+          let maxOdd = 0;
+          let bookmakerName = "";
+          for (let j = 1; j < row.length; j++) {
+            const odd = parseFloat(row[j]);
+            if (!isNaN(odd) && odd > maxOdd) {
+              maxOdd = odd;
+              bookmakerName = headers[j] || `Bookmaker ${j}`;
+            }
+          }
+          bestOdds.push(maxOdd);
+          bestBookmakers.push(bookmakerName);
+        }
+        const sumReciprocals = bestOdds.reduce((sum, odd) => sum + (1/odd), 0);
+        let resultHTML = "";
+        if (sumReciprocals < 1) {
+          const profitMargin = 1 - sumReciprocals;
+          resultHTML += `<span class="text-green-600 font-bold">Arbitrage opportunity exists!</span><br>`;
+          resultHTML += `Profit Margin: ${(profitMargin * 100).toFixed(2)}%<br>`;
+          resultHTML += `<strong>Best Odds by Outcome:</strong><br>`;
+          outcomes.forEach((outcome, index) => {
+            resultHTML += `${outcome}: Best Odd = ${bestOdds[index]} from ${bestBookmakers[index]}<br>`;
+          });
+          const totalStake = 100;
+          let stakes = bestOdds.map(odd => totalStake / (odd * sumReciprocals));
+          resultHTML += `<br>For a total stake of ${totalStake}, bet:<br>`;
+          outcomes.forEach((outcome, index) => {
+            resultHTML += `${outcome} (${bestBookmakers[index]}): ${stakes[index].toFixed(2)}<br>`;
+          });
+          advancedResultDiv.innerHTML = resultHTML;
+          advancedGraphSection.classList.remove('hidden');
+          const ctx3 = document.getElementById('advancedChart').getContext('2d');
+          if (advancedChart) advancedChart.destroy();
+          advancedChart = new Chart(ctx3, {
+            type: 'bar',
+            data: {
+              labels: outcomes,
+              datasets: [{
+                label: 'Stake Distribution',
+                data: stakes,
+                backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+              }]
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  title: { display: true, text: 'Stake' }
+                }
+              }
+            }
+          });
+        } else {
+          advancedResultDiv.innerHTML = `<span class="text-red-600 font-bold">No arbitrage opportunity.</span>`;
+          advancedGraphSection.classList.add('hidden');
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    });
+
+    // ------------------ Download Sample Excel Matrix ------------------
+    const downloadSampleBtn = document.getElementById('downloadSampleBtn');
+    downloadSampleBtn.addEventListener('click', () => {
+      // Create sample matrix data: header row and two outcome rows
+      const sampleData = [
+        ["Outcome/Bookmaker", "Bookmaker 1", "Bookmaker 2", "Bookmaker 3", "Bookmaker 4"],
+        ["Home Win (Man UTD)", 1.80, 1.85, 1.90, 1.95],
+        ["Draw", 4.50, 4.40, 4.60, 4.55]
+      ];
+      // Convert data to worksheet using SheetJS
+      const ws = XLSX.utils.aoa_to_sheet(sampleData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Arbitrage");
+      // Generate binary array and create a Blob for download
+      const wbout = XLSX.write(wb, { bookType:'xlsx', type:'array' });
+      const blob = new Blob([wbout], { type: "application/octet-stream" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "sample_arbitrage_matrix.xlsx";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
